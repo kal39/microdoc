@@ -39,12 +39,12 @@ def parse_doc_section(lines, prepend=""):
 
     return doc
 
-def parse_code_section(file):
+def parse_code_section(file, prepend=""):
     code = ""
     while True:
         line = lines.peek()
         if not line or doc_section_start(line): break
-        else: code += lines.next()
+        else: code += prepend + lines.next()
 
     return code
 
@@ -57,10 +57,10 @@ def generate_docs(lines):
             doc_type = doc_type.groups()[0]
 
             if doc_type == "code":
-                doc_section = parse_doc_section(lines, "> ")
+                doc_section = parse_doc_section(lines, "  ")
                 lines.next()
-                code_section = parse_code_section(lines).strip() + "\n"
-                doc += "```c\n" + code_section + "```\n" + doc_section + "\n<br/>\n\n"
+                code_section = "  " + parse_code_section(lines, "  ").strip() + "\n"
+                doc += "- ```c\n" + code_section + "  ```\n" + doc_section + "\n<br/>\n\n"
 
             elif doc_type == "":
                 doc_section = parse_doc_section(lines)
